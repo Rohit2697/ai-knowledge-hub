@@ -1,10 +1,12 @@
 export type ArticleCardProps = {
+  id:string
   slug: string;
   title: string;
   description: string;
-  tags: string[];
+  tags: string;
   author: string;
   date: string;
+  coverImage:string
 };
 
 export type Article = {

@@ -10,6 +10,9 @@ export default function ArticleCard({
   author,
   date,
 }: ArticleCardProps) {
+  const newTags: string[] = tags ? JSON.parse(tags) : [];
+  const newDate = new Date(parseInt(date));
+
   return (
     <Link href={`/articles/${slug}`}>
       <div className="border rounded-lg p-4 shadow-sm hover:shadow-md transition">
@@ -17,7 +20,7 @@ export default function ArticleCard({
         <p className="text-sm text-gray-600 mb-3">{description}</p>
 
         <div className="flex gap-2 flex-wrap mb-3">
-          {tags.map((tag, index) => (
+          {newTags.map((tag, index) => (
             <span
               key={index}
               className="bg-gray-100 text-sm px-3 py-1 rounded-full text-gray-700"
@@ -29,7 +32,10 @@ export default function ArticleCard({
 
         <div className="flex justify-between text-sm text-gray-500">
           <span>by {author}</span>
-          <span>{date}</span>
+          <span>{`${newDate.getDate().toString().padStart(2, '0')}-${newDate
+            .getMonth()
+            .toString()
+            .padStart(2, '0')}-${newDate.getFullYear().toString()}`}</span>
         </div>
       </div>
     </Link>
