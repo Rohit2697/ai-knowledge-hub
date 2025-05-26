@@ -889,7 +889,7 @@ export namespace Prisma {
     author: string | null
     date: string | null
     readingTime: string | null
-    coverImage: string | null
+    coverImage: Uint8Array | null
   }
 
   export type PostMaxAggregateOutputType = {
@@ -902,7 +902,7 @@ export namespace Prisma {
     author: string | null
     date: string | null
     readingTime: string | null
-    coverImage: string | null
+    coverImage: Uint8Array | null
   }
 
   export type PostCountAggregateOutputType = {
@@ -1042,7 +1042,7 @@ export namespace Prisma {
     author: string
     date: string
     readingTime: string
-    coverImage: string
+    coverImage: Uint8Array
     _count: PostCountAggregateOutputType | null
     _min: PostMinAggregateOutputType | null
     _max: PostMaxAggregateOutputType | null
@@ -1129,7 +1129,7 @@ export namespace Prisma {
       author: string
       date: string
       readingTime: string
-      coverImage: string
+      coverImage: Uint8Array
     }, ExtArgs["result"]["post"]>
     composites: {}
   }
@@ -1562,7 +1562,7 @@ export namespace Prisma {
     readonly author: FieldRef<"Post", 'String'>
     readonly date: FieldRef<"Post", 'String'>
     readonly readingTime: FieldRef<"Post", 'String'>
-    readonly coverImage: FieldRef<"Post", 'String'>
+    readonly coverImage: FieldRef<"Post", 'Bytes'>
   }
     
 
@@ -1975,6 +1975,13 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Bytes'
+   */
+  export type BytesFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Bytes'>
+    
+
+
+  /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -1997,7 +2004,7 @@ export namespace Prisma {
     author?: StringFilter<"Post"> | string
     date?: StringFilter<"Post"> | string
     readingTime?: StringFilter<"Post"> | string
-    coverImage?: StringFilter<"Post"> | string
+    coverImage?: BytesFilter<"Post"> | Uint8Array
   }
 
   export type PostOrderByWithRelationInput = {
@@ -2026,7 +2033,7 @@ export namespace Prisma {
     author?: StringFilter<"Post"> | string
     date?: StringFilter<"Post"> | string
     readingTime?: StringFilter<"Post"> | string
-    coverImage?: StringFilter<"Post"> | string
+    coverImage?: BytesFilter<"Post"> | Uint8Array
   }, "id">
 
   export type PostOrderByWithAggregationInput = {
@@ -2058,7 +2065,7 @@ export namespace Prisma {
     author?: StringWithAggregatesFilter<"Post"> | string
     date?: StringWithAggregatesFilter<"Post"> | string
     readingTime?: StringWithAggregatesFilter<"Post"> | string
-    coverImage?: StringWithAggregatesFilter<"Post"> | string
+    coverImage?: BytesWithAggregatesFilter<"Post"> | Uint8Array
   }
 
   export type PostCreateInput = {
@@ -2071,7 +2078,7 @@ export namespace Prisma {
     author: string
     date: string
     readingTime: string
-    coverImage: string
+    coverImage: Uint8Array
   }
 
   export type PostUncheckedCreateInput = {
@@ -2084,7 +2091,7 @@ export namespace Prisma {
     author: string
     date: string
     readingTime: string
-    coverImage: string
+    coverImage: Uint8Array
   }
 
   export type PostUpdateInput = {
@@ -2097,7 +2104,7 @@ export namespace Prisma {
     author?: StringFieldUpdateOperationsInput | string
     date?: StringFieldUpdateOperationsInput | string
     readingTime?: StringFieldUpdateOperationsInput | string
-    coverImage?: StringFieldUpdateOperationsInput | string
+    coverImage?: BytesFieldUpdateOperationsInput | Uint8Array
   }
 
   export type PostUncheckedUpdateInput = {
@@ -2110,7 +2117,7 @@ export namespace Prisma {
     author?: StringFieldUpdateOperationsInput | string
     date?: StringFieldUpdateOperationsInput | string
     readingTime?: StringFieldUpdateOperationsInput | string
-    coverImage?: StringFieldUpdateOperationsInput | string
+    coverImage?: BytesFieldUpdateOperationsInput | Uint8Array
   }
 
   export type PostCreateManyInput = {
@@ -2123,7 +2130,7 @@ export namespace Prisma {
     author: string
     date: string
     readingTime: string
-    coverImage: string
+    coverImage: Uint8Array
   }
 
   export type PostUpdateManyMutationInput = {
@@ -2136,7 +2143,7 @@ export namespace Prisma {
     author?: StringFieldUpdateOperationsInput | string
     date?: StringFieldUpdateOperationsInput | string
     readingTime?: StringFieldUpdateOperationsInput | string
-    coverImage?: StringFieldUpdateOperationsInput | string
+    coverImage?: BytesFieldUpdateOperationsInput | Uint8Array
   }
 
   export type PostUncheckedUpdateManyInput = {
@@ -2149,7 +2156,7 @@ export namespace Prisma {
     author?: StringFieldUpdateOperationsInput | string
     date?: StringFieldUpdateOperationsInput | string
     readingTime?: StringFieldUpdateOperationsInput | string
-    coverImage?: StringFieldUpdateOperationsInput | string
+    coverImage?: BytesFieldUpdateOperationsInput | Uint8Array
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -2164,6 +2171,13 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     not?: NestedStringFilter<$PrismaModel> | string
+  }
+
+  export type BytesFilter<$PrismaModel = never> = {
+    equals?: Uint8Array | BytesFieldRefInput<$PrismaModel>
+    in?: Uint8Array[]
+    notIn?: Uint8Array[]
+    not?: NestedBytesFilter<$PrismaModel> | Uint8Array
   }
 
   export type PostCountOrderByAggregateInput = {
@@ -2222,8 +2236,22 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
+  export type BytesWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Uint8Array | BytesFieldRefInput<$PrismaModel>
+    in?: Uint8Array[]
+    notIn?: Uint8Array[]
+    not?: NestedBytesWithAggregatesFilter<$PrismaModel> | Uint8Array
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBytesFilter<$PrismaModel>
+    _max?: NestedBytesFilter<$PrismaModel>
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
+  }
+
+  export type BytesFieldUpdateOperationsInput = {
+    set?: Uint8Array
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -2238,6 +2266,13 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     not?: NestedStringFilter<$PrismaModel> | string
+  }
+
+  export type NestedBytesFilter<$PrismaModel = never> = {
+    equals?: Uint8Array | BytesFieldRefInput<$PrismaModel>
+    in?: Uint8Array[]
+    notIn?: Uint8Array[]
+    not?: NestedBytesFilter<$PrismaModel> | Uint8Array
   }
 
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
@@ -2266,6 +2301,16 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntFilter<$PrismaModel> | number
+  }
+
+  export type NestedBytesWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Uint8Array | BytesFieldRefInput<$PrismaModel>
+    in?: Uint8Array[]
+    notIn?: Uint8Array[]
+    not?: NestedBytesWithAggregatesFilter<$PrismaModel> | Uint8Array
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBytesFilter<$PrismaModel>
+    _max?: NestedBytesFilter<$PrismaModel>
   }
 
 

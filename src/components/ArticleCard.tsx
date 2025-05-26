@@ -3,7 +3,7 @@ import { ArticleCardProps } from '@/app/articles/article-type';
 import Link from 'next/link';
 
 export default function ArticleCard({
-  slug,
+  id,
   title,
   description,
   tags,
@@ -14,7 +14,7 @@ export default function ArticleCard({
   const newDate = new Date(parseInt(date));
 
   return (
-    <Link href={`/articles/${slug}`}>
+    <Link href={`/articles/${id}`}>
       <div className="border rounded-lg p-4 shadow-sm hover:shadow-md transition">
         <h2 className="text-lg font-semibold mb-1">{title}</h2>
         <p className="text-sm text-gray-600 mb-3">{description}</p>

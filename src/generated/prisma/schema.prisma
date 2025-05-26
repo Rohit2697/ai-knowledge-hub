@@ -21,5 +21,5 @@ model Post {
   author      String
   date        String
   readingTime String
-  coverImage  String
+  coverImage  Bytes
 }

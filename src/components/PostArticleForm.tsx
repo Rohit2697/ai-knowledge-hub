@@ -13,7 +13,7 @@ export default function PostArticleForm() {
   const [content, setContent] = useState('');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [coverimage, setCoverimage] = useState('');
+  const [coverimage, setCoverimage] = useState<File | null>(null);
   const [tags, setTags] = useState('');
   const [redirectTime, setRedirectTime] = useState(5);
   const [successAlert, setSuccessAlert] = useState(false);
@@ -22,7 +22,7 @@ export default function PostArticleForm() {
     console.log(content);
   };
   const onChangeImageLink = (e: ChangeEvent<HTMLInputElement>) => {
-    setCoverimage(e.target.value);
+    setCoverimage(e.target.files?.[0] || null);
   };
   const onChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
@@ -35,19 +35,21 @@ export default function PostArticleForm() {
   };
 
   const postArticle = async () => {
+    //console.log(coverimage);
+    //return;
     if (!title || !content || !description) {
-      return console.log('Missing Field');
+      //return console.log('Missing Field');
     }
-    const res = await fetch('/api/articles', {
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('content', content);
+    formData.append('description', description);
+    formData.append('file', coverimage || ''); // coverimage is a File object
+    formData.append('tags', tags);
+    const res = await fetch('/api/article', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        title,
-        content,
-        description,
-        coverImage: coverimage,
-        tags: JSON.stringify(tags.split(',')),
-      }),
+      // headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: formData,
     });
     if (!res.ok) {
       return console.log(res);
@@ -76,6 +78,7 @@ export default function PostArticleForm() {
         placeholder="Provide cover image link"
         className="rounded shadow mb-2 border-none"
         onChange={onChangeImageLink}
+        type="file"
       ></Input>
 
       <Label htmlFor="tags" className="font-bold text-lg mb-2">
