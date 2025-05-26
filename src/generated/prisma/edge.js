@@ -122,7 +122,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "D:\\ai-knowledge-hub\\src\\generated\\prisma",
+      "value": "C:\\ai-knowledge-hub\\src\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -136,7 +136,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "D:\\ai-knowledge-hub\\prisma\\schema.prisma",
+    "sourceFilePath": "C:\\ai-knowledge-hub\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

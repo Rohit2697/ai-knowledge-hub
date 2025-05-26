@@ -1,8 +1,8 @@
 import { Alert, AlertTitle } from '@/components/ui/alert';
-interface redirectProps {
+type redirectProps = {
   redirectTime: number;
 }
-export default function RedirectAlert({ redirectTime }: redirectProps) {
+export default function SaveArticleAlert({ redirectTime }: redirectProps) {
   return (
     <Alert className="bg-violet-300 border-none rounded shadow font-bold">
       <AlertTitle>

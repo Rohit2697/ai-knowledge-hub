@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE "Post" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" TEXT NOT NULL PRIMARY KEY,
     "slug" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
@@ -9,5 +9,5 @@ CREATE TABLE "Post" (
     "author" TEXT NOT NULL,
     "date" TEXT NOT NULL,
     "readingTime" TEXT NOT NULL,
-    "coverImage" TEXT NOT NULL
+    "coverImage" BLOB NOT NULL
 );

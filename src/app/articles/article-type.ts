@@ -1,12 +1,20 @@
 export type ArticleCardProps = {
   id: string;
-  slug: string;
   title: string;
   description: string;
   tags: string;
   author: string;
   date: string;
-  coverImage: Uint8Array<ArrayBufferLike>;
+};
+export type PreviewArticleProps = {
+  slug?: string; // Usually same as id, used for routing
+  title?: string; // Article headline
+  description?: string; // Short summary
+  content?: string; // Full article body
+  tags?: string; // List of tags/categories
+  // Estimated reading time (e.g. "5 min read")
+  coverImage?: string; // Optional image path or URL
+  setPreview: Dispatch<SetStateAction<boolean>>;
 };
 
 export type Article = {

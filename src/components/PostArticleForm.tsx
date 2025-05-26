@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import TiptapEditor from './TiptapEditor';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -7,7 +7,11 @@ import { Textarea } from './ui/textarea';
 import { Label } from './ui/label';
 import { ChangeEvent } from 'react';
 import { redirect } from 'next/navigation';
-import RedirectAlert from './RedirectAlert';
+import SaveArticleAlert from './SaveArticleAlert';
+import Image from 'next/image';
+import PreviewArticle from './PreviewArticle';
+import { PreviewArticleProps } from '@/app/articles/article-type';
+import ErrorAlert from './ErrorAlert';
 
 export default function PostArticleForm() {
   const [content, setContent] = useState('');
@@ -17,112 +21,170 @@ export default function PostArticleForm() {
   const [tags, setTags] = useState('');
   const [redirectTime, setRedirectTime] = useState(5);
   const [successAlert, setSuccessAlert] = useState(false);
+  const [previewImage, setPreviewImage] = useState(false);
+  const [preview, setPreview] = useState(false);
+  const [imageUrl, setImageUrl] = useState('');
+  const [slug, setSlug] = useState('');
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [previewProps, setPreviewProps] = useState<PreviewArticleProps | null>(null);
+
   const onChangeContent = (post: string) => {
     setContent(post);
-    console.log(content);
   };
+
   const onChangeImageLink = (e: ChangeEvent<HTMLInputElement>) => {
     setCoverimage(e.target.files?.[0] || null);
   };
+
   const onChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
+    setSlug(e.target.value.toLowerCase().split(" ").join("-"));
   };
+
   const onChangeDescription = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setDescription(e.target.value);
   };
+
   const onChangetags = (e: ChangeEvent<HTMLInputElement>) => {
     setTags(e.target.value);
   };
 
+  const onPreviewClick = () => {
+    setPreviewProps({ title, slug, description, content, tags, coverImage: imageUrl, setPreview });
+    setPreview(true);
+  };
+
   const postArticle = async () => {
-    //console.log(coverimage);
-    //return;
     if (!title || !content || !description) {
-      //return console.log('Missing Field');
+      setErrorMessage('Required Fields are Missing');
+      setError(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
     }
     const formData = new FormData();
     formData.append('title', title);
     formData.append('content', content);
     formData.append('description', description);
-    formData.append('file', coverimage || ''); // coverimage is a File object
+    formData.append('file', coverimage || '');
     formData.append('tags', tags);
+    formData.append('slug', slug);
+
     const res = await fetch('/api/article', {
       method: 'POST',
-      // headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: formData,
     });
     if (!res.ok) {
       return console.log(res);
     }
     setSuccessAlert(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     const countdownInterval = setInterval(() => {
       setRedirectTime((prev) => {
         if (prev <= 1) {
           clearInterval(countdownInterval);
-          redirect('/'); // Redirect after countdown ends
+          redirect('/');
         }
         return prev - 1;
       });
     }, 1000);
   };
 
+  useEffect(() => {
+    if (coverimage) {
+      const url = URL.createObjectURL(coverimage);
+      setImageUrl(url);
+      setPreviewImage(true);
+    }
+    return () => URL.revokeObjectURL(imageUrl);
+  }, [coverimage]);
+
   return (
-    <div className="min-h-screen max-w-4xl mx-auto">
-      {successAlert && <RedirectAlert redirectTime={redirectTime} />}
-      <Label htmlFor="image-link" className="font-bold text-lg mb-2">
-        Cover Image
-      </Label>
+    <div className="min-h-screen max-w-4xl mx-auto px-4 py-10 bg-white rounded-xl shadow-md">
+      {successAlert && <SaveArticleAlert redirectTime={redirectTime} />}
+      {error && <ErrorAlert message={errorMessage} />}
+      {(preview && previewProps) ? <PreviewArticle {...previewProps} /> : (
+        <div className="space-y-6">
+          <div>
+            <label htmlFor="image-link" className="block text-lg font-semibold text-violet-700 mb-2">
+              Choose Cover Image
+            </label>
+            <input
+              id="image-link"
+              type="file"
+              onChange={onChangeImageLink}
+              className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100 text-gray-500"
+            />
+          </div>
 
-      <Input
-        id="image-link"
-        placeholder="Provide cover image link"
-        className="rounded shadow mb-2 border-none"
-        onChange={onChangeImageLink}
-        type="file"
-      ></Input>
+          {previewImage && (
+            <Image
+              src={imageUrl}
+              alt={coverimage?.name || 'Preview Image'}
+              className="w-full rounded-lg"
+              width={800}
+              height={400}
+            />
+          )}
 
-      <Label htmlFor="tags" className="font-bold text-lg mb-2">
-        Tags
-      </Label>
-      <Input
-        id="tags"
-        placeholder="Provide tags separated by ','"
-        className="rounded shadow mb-2 border-none"
-        onChange={onChangetags}
-      ></Input>
+          <div>
+            <Label htmlFor="tags" className="text-lg font-semibold text-violet-700">Tags</Label>
+            <Input
+              id="tags"
+              placeholder="Provide tags separated by ','"
+              className="rounded border-gray-300 shadow-sm focus:ring-violet-500 focus:border-violet-500"
+              onChange={onChangetags}
+              value={tags}
+            />
+          </div>
 
-      <Label htmlFor="title" className="font-bold text-lg mb-2">
-        Title
-      </Label>
-      <Input
-        placeholder="Enter post title"
-        id="title"
-        className="rounded shadow mb-2 border-none"
-        onChange={onChangeTitle}
-      ></Input>
-      <Label htmlFor="description" className="font-bold text-lg mb-2">
-        Description
-      </Label>
-      <Textarea
-        id="description"
-        onChange={onChangeDescription}
-        className="rounded shadow mb-2 border-none"
-        placeholder="Enter Description or Generate using AI based on your given content"
-      ></Textarea>
-      <Label htmlFor="content" className="font-bold text-lg mb-2">
-        Content
-      </Label>
-      <div id="content">
-        <TiptapEditor content={content} onChange={onChangeContent} />
-      </div>
+          <div>
+            <Label htmlFor="title" className="text-lg font-semibold text-violet-700">
+              Title <span className="text-red-500">*</span>
+            </Label>
+            <Input
+              id="title"
+              placeholder="Enter post title"
+              className="rounded border-gray-300 shadow-sm focus:ring-violet-500 focus:border-violet-500"
+              onChange={onChangeTitle}
+              value={title}
+              required
+            />
+          </div>
 
-      <Button
-        onClick={postArticle}
-        className="bg-violet-600 rounded hover:focus:"
-        variant="default"
-      >
-        Submit
-      </Button>
+          <div>
+            <Label htmlFor="description" className="text-lg font-semibold text-violet-700">
+              Description <span className="text-red-500">*</span>
+            </Label>
+            <Textarea
+              id="description"
+              value={description}
+              onChange={onChangeDescription}
+              className="rounded border-gray-300 shadow-sm focus:ring-violet-500 focus:border-violet-500"
+              placeholder="Enter description or generate using AI"
+              required
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="content" className="text-lg font-semibold text-violet-700">
+              Content <span className="text-red-500">*</span>
+            </Label>
+            <div id="content" className="rounded border border-gray-300 p-2 focus-within:ring-2 focus-within:ring-violet-500">
+              <TiptapEditor content={content} onChange={onChangeContent} />
+            </div>
+          </div>
+
+          <div className="flex gap-4 justify-end">
+            <Button onClick={onPreviewClick} className="bg-violet-600 hover:bg-violet-700 text-white rounded px-6 py-2 shadow" variant="default">
+              Preview
+            </Button>
+            <Button onClick={postArticle} className="bg-violet-600 hover:bg-violet-700 text-white rounded px-6 py-2 shadow" variant="default">
+              Submit
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

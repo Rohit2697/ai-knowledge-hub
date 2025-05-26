@@ -1,22 +1,19 @@
 'use client';
-import { notFound } from 'next/navigation';
 import { Article } from '@/app/articles/article-type';
 import Image from 'next/image';
-
 import React, { useEffect, useState } from 'react';
+import { timestampToDateTimeString } from '@/lib/utils';
 
 type ArticleClientProps = {
   id: string;
 };
 
 export default function ArticleClient({ id }: ArticleClientProps) {
-  console.log('AtriclePage Client'); // i can see this log
   const [article, setArticle] = useState<Article | null>(null);
   const [imageUrl, setImageURL] = useState<string>('');
   const [tags, setTags] = useState<string[]>([]);
 
   useEffect(() => {
-    console.log('in UseEffect'); //not this one i can see
     const fetchArticle = async () => {
       const res = await fetch(`/api/article/${id}`);
       if (!res.ok) {
@@ -36,20 +33,32 @@ export default function ArticleClient({ id }: ArticleClientProps) {
     return () => URL.revokeObjectURL(imageUrl);
   }, [id]);
 
-  if (!article) return <div>Loading...</div>;
-  console.log(article);
+  if (!article) 
+    return (
+      <div className="flex justify-center items-center h-screen text-violet-600 font-semibold text-xl">
+        Loading...
+      </div>
+    );
+
   return (
-    <main className="max-w-4xl mx-auto px-4 py-10">
-      <h1 className="text-3xl font-bold mb-4">{article.title}</h1>
-      <div className="text-gray-600 text-sm mb-4">
-        By {article.author} · {article.date} · {article.readingTime}
+    <main className="max-w-4xl mx-auto px-6 py-12 bg-gradient-to-b from-violet-50 to-white rounded-lg shadow-lg">
+      <h1 className="text-4xl font-extrabold mb-6 text-violet-700 border-b-4 border-violet-300 pb-3">
+        {article.title}
+      </h1>
+
+      <div className="text-violet-600 text-sm mb-6 font-semibold flex flex-wrap gap-2">
+        <span>By {article.author}</span>
+        <span>·</span>
+        <span>{timestampToDateTimeString(parseInt(article.date))}</span>
+        <span>·</span>
+        <span>{article.readingTime}</span>
       </div>
 
-      <div className="flex flex-wrap gap-2 mb-6">
+      <div className="flex flex-wrap gap-3 mb-8">
         {tags.map((tag) => (
           <span
             key={tag}
-            className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-sm"
+            className="bg-violet-100 text-violet-700 px-3 py-1 rounded-full text-sm font-medium"
           >
             {tag}
           </span>
@@ -60,13 +69,15 @@ export default function ArticleClient({ id }: ArticleClientProps) {
         <Image
           src={imageUrl}
           alt={article.slug}
-          className="w-full rounded-lg mb-6"
+          className="w-full rounded-lg mb-8 shadow-md"
           width={800}
           height={400}
         />
       )}
 
-      <article className="prose prose-lg max-w-none">
+      <p className="prose prose-lg max-w-none mb-8 text-violet-900 font-medium">{article.description}</p>
+
+      <article className="prose prose-lg max-w-none text-violet-900">
         <div dangerouslySetInnerHTML={{ __html: article.content }} />
       </article>
     </main>
