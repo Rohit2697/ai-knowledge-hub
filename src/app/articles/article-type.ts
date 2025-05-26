@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from "react";
 export type ArticleCardProps = {
   id: string;
   title: string;
