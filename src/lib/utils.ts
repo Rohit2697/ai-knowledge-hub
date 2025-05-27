@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import readtime from "reading-time";
+import jwt from "jsonwebtoken";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -17,10 +18,37 @@ export const readTime = (content: string): string => {
   return stats.text;
 };
 
-
 export function timestampToDateTimeString(timestamp: number): string {
-    const date = new Date(timestamp);
-    return date.toISOString().replace(/T/, ' ').slice(0, -5); // "2022-03-14T16:39:12.000Z" -> "2022-03-14 16:39:12"
+  const date = new Date(timestamp);
+  return date.toISOString().replace(/T/, " ").slice(0, -5); // "2022-03-14T16:39:12.000Z" -> "2022-03-14 16:39:12"
 }
 
+export const generateToken = (email: string, name: string) => {
+  const token = jwt.sign({ email, name }, "ai-knowledge-content", {
+    expiresIn: "1h",
+  });
+  return token;
+};
+export const decodeToken = (token: string) => {
+  return jwt.verify(token, "ai-knowledge-content");
+};
+export const verifyToken = (token: string) => {
+  const decode = decodeToken(token);
+  if (!decode) return false;
+  return true;
+};
 
+export function getInitials(name: string): string {
+  const words = name.trim().split(/\s+/);
+
+  if (words.length >= 2) {
+    return (words[0][0] + words[1][0]).toUpperCase();
+  }
+
+  const single = words[0];
+  if (single.length > 1) {
+    return (single[0] + single[single.length - 1]).toUpperCase();
+  }
+
+  return single.toUpperCase();
+}

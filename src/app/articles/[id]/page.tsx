@@ -7,7 +7,7 @@ type Params = {
 };
 
 export default async function ArticlePage({ params }: Params) {
-  console.log("AtriclePage") // i can see this log
+ // i can see this log
   const { id } = await Promise.resolve(params);
   return <ArticleClient id={id} />;
 }

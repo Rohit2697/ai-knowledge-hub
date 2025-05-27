@@ -127,7 +127,17 @@ exports.Prisma.PostScalarFieldEnum = {
   author: 'author',
   date: 'date',
   readingTime: 'readingTime',
-  coverImage: 'coverImage'
+  coverImage: 'coverImage',
+  createdBy: 'createdBy'
+};
+
+exports.Prisma.UserScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  password: 'password',
+  token: 'token',
+  tokenExpiresAt: 'tokenExpiresAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -135,9 +145,15 @@ exports.Prisma.SortOrder = {
   desc: 'desc'
 };
 
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
+
 
 exports.Prisma.ModelName = {
-  Post: 'Post'
+  Post: 'Post',
+  User: 'User'
 };
 
 /**

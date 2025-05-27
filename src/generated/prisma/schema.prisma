@@ -22,4 +22,16 @@ model Post {
   date        String
   readingTime String
   coverImage  Bytes
+  createdBy   String
+  user        User   @relation("UserPosts", fields: [createdBy], references: [id])
+}
+
+model User {
+  id             String    @id @default(uuid()) // changed from Int to String with UUID
+  name           String
+  email          String    @unique
+  password       String
+  token          String?
+  tokenExpiresAt DateTime?
+  posts          Post[]    @relation("UserPosts")
 }

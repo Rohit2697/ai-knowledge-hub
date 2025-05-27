@@ -7,11 +7,14 @@ type ErrorAlertProps = {
 }
 export function ErrorAlert({ message }: ErrorAlertProps) {
     return (
-        <Alert variant="destructive" className='bg-red-300 border-none rounded shadow font-bold'>
-            <AlertCircle className='h-4 w-4'></AlertCircle>
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{message}</AlertDescription>
+        <Alert variant="destructive" className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md shadow-md flex items-start space-x-3">
+            <AlertCircle className="h-5 w-5 mt-1 text-red-600" />
+            <div>
+                <AlertTitle className="font-semibold text-lg">Error</AlertTitle>
+                <AlertDescription className="text-sm">{message}</AlertDescription>
+            </div>
         </Alert>
+
     );
 }
 

@@ -12,6 +12,8 @@ import Image from 'next/image';
 import PreviewArticle from './PreviewArticle';
 import { PreviewArticleProps } from '@/app/articles/article-type';
 import ErrorAlert from './ErrorAlert';
+import { Spinner } from './ui/spinner';
+import { cn } from '@/lib/utils';
 
 export default function PostArticleForm() {
   const [content, setContent] = useState('');
@@ -25,10 +27,14 @@ export default function PostArticleForm() {
   const [preview, setPreview] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
   const [slug, setSlug] = useState('');
-  const [error, setError] = useState(false);
+  const [initializing, setInitializing] = useState(true)
   const [errorMessage, setErrorMessage] = useState('');
   const [previewProps, setPreviewProps] = useState<PreviewArticleProps | null>(null);
+  const [loading, setLoading] = useState(false)
 
+  useEffect(() => {
+    setInitializing(false)
+  }, [])
   const onChangeContent = (post: string) => {
     setContent(post);
   };
@@ -56,10 +62,12 @@ export default function PostArticleForm() {
   };
 
   const postArticle = async () => {
+    setLoading(true)
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     if (!title || !content || !description) {
+      setLoading(false)
       setErrorMessage('Required Fields are Missing');
-      setError(true);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+
       return;
     }
     const formData = new FormData();
@@ -69,25 +77,31 @@ export default function PostArticleForm() {
     formData.append('file', coverimage || '');
     formData.append('tags', tags);
     formData.append('slug', slug);
-
-    const res = await fetch('/api/article', {
-      method: 'POST',
-      body: formData,
-    });
-    if (!res.ok) {
-      return console.log(res);
-    }
-    setSuccessAlert(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    const countdownInterval = setInterval(() => {
-      setRedirectTime((prev) => {
-        if (prev <= 1) {
-          clearInterval(countdownInterval);
-          redirect('/');
-        }
-        return prev - 1;
+    try {
+      const res = await fetch('/api/article', {
+        method: 'POST',
+        body: formData,
       });
-    }, 1000);
+      setLoading(false)
+      if (!res.ok) {
+        const data = await res.json()
+        setErrorMessage(data.message || 'Unable to Save Article')
+      }
+      setSuccessAlert(true);
+      const countdownInterval = setInterval(() => {
+        setRedirectTime((prev) => {
+          if (prev <= 1) {
+            clearInterval(countdownInterval);
+            redirect('/');
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } catch {
+      setLoading(false)
+      setErrorMessage('Something went wrong');
+    }
+
   };
 
   useEffect(() => {
@@ -99,12 +113,20 @@ export default function PostArticleForm() {
     return () => URL.revokeObjectURL(imageUrl);
   }, [coverimage]);
 
+  if (initializing) {
+    return (<div className="min-h-screen flex items-center justify-center bg-white">
+      <Spinner size="large" className="text-violet-600" />
+    </div>)
+  }
   return (
     <div className="min-h-screen max-w-4xl mx-auto px-4 py-10 bg-white rounded-xl shadow-md">
+      {loading && <div className="absolute inset-0 z-10 flex items-center justify-center  bg-opacity-60 rounded-xl">
+        <Spinner size="large" className="text-violet-600" />
+      </div>}
       {successAlert && <SaveArticleAlert redirectTime={redirectTime} />}
-      {error && <ErrorAlert message={errorMessage} />}
+      {errorMessage && <ErrorAlert message={errorMessage} />}
       {(preview && previewProps) ? <PreviewArticle {...previewProps} /> : (
-        <div className="space-y-6">
+        <div className={cn("space-y-6 ", loading ? "opacity-50 pointer-events-none" : "opacity-100")}>
           <div>
             <label htmlFor="image-link" className="block text-lg font-semibold text-violet-700 mb-2">
               Choose Cover Image

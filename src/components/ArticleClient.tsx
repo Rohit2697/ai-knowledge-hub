@@ -3,6 +3,7 @@ import { Article } from '@/app/articles/article-type';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { timestampToDateTimeString } from '@/lib/utils';
+import { Spinner } from './ui/spinner';
 
 type ArticleClientProps = {
   id: string;
@@ -33,10 +34,10 @@ export default function ArticleClient({ id }: ArticleClientProps) {
     return () => URL.revokeObjectURL(imageUrl);
   }, [id]);
 
-  if (!article) 
+  if (!article)
     return (
       <div className="flex justify-center items-center h-screen text-violet-600 font-semibold text-xl">
-        Loading...
+        <Spinner size="large" className="text-violet-600" />
       </div>
     );
 

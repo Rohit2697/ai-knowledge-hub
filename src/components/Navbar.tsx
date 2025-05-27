@@ -2,8 +2,9 @@
 import React from 'react';
 import Link from 'next/link';
 import { Button } from './ui/button';
+import Profile from './profile/profile';
 
-export default function Navbar() {
+export default function Navbar({name}:{name:string}) {
   return (
     <nav className="w-full flex items-center justify-between px-8 py-5 bg-white shadow-md border-b border-violet-200">
       <Link href={'/'}>
@@ -38,6 +39,7 @@ export default function Navbar() {
             Post Article
           </Button>
         </Link>
+        <Profile name={name}/>
       </div>
     </nav>
   );
