@@ -25,17 +25,23 @@ export async function POST(req: NextRequest) {
     );
   }
   const hashedPassword = await bcrypt.hash(password, 10);
-  const token = generateToken(email, name);
   const user = await db.user.create({
     data: {
       email: email.trim().toLowerCase(),
       name,
       password: hashedPassword,
+    },
+  });
+  const token = generateToken(user.id, user.email, user.name);
+  await db.user.update({
+    where: {
+      id: user.id,
+    },
+    data: {
       token,
       tokenExpiresAt: new Date(Date.now() + 60 * 60 * 1000),
     },
   });
-
   (await cookies()).set("token", token, {
     httpOnly: true,
     path: "/",

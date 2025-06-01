@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
       { status: 401 }
     );
   }
-  const token = generateToken(user.email, user.name);
+  const token = generateToken(user.id, user.email, user.name);
 
   await db.user.update({
     where: {

@@ -28,7 +28,7 @@ export default function ArticleClient({ id }: ArticleClientProps) {
       const ImageURL = urlCreator.createObjectURL(blob);
 
       setImageURL(ImageURL);
-      setTags(post.article.tags ? JSON.parse(post.article.tags) : []);
+      setTags(post.article.tags ? post.article.tags : []);
     };
     fetchArticle();
     return () => URL.revokeObjectURL(imageUrl);
@@ -36,9 +36,8 @@ export default function ArticleClient({ id }: ArticleClientProps) {
 
   if (!article)
     return (
-      <div className="flex justify-center items-center h-screen text-violet-600 font-semibold text-xl">
-        <Spinner size="large" className="text-violet-600" />
-      </div>
+      <Spinner size="large" className="text-violet-600" />
+
     );
 
   return (
@@ -70,13 +69,13 @@ export default function ArticleClient({ id }: ArticleClientProps) {
         <Image
           src={imageUrl}
           alt={article.slug}
-          className="w-full rounded-lg mb-8 shadow-md"
+          className="w-full rounded-lg mb-6 border border-violet-100 shadow"
           width={800}
           height={400}
         />
       )}
 
-      <p className="prose prose-lg max-w-none mb-8 text-violet-900 font-medium">{article.description}</p>
+      <p className="text-lg text-gray-700 mb-6 bg-violet-50 p-4 rounded border-l-4 border-violet-400 shadow-sm">{article.description}</p>
 
       <article className="prose prose-lg max-w-none text-violet-900">
         <div dangerouslySetInnerHTML={{ __html: article.content }} />

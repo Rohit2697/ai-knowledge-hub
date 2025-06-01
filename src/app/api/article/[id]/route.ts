@@ -1,26 +1,31 @@
-import { db } from '@/db';
-import { errorResponseObject } from '@/lib/utils';
-import { NextRequest, NextResponse } from 'next/server';
+import { db } from "@/db";
+import { errorResponseObject } from "@/lib/utils";
+import { NextRequest, NextResponse } from "next/server";
 
 export const config = {
   api: {
     bodyParser: false,
   },
 };
+interface Params {
+  params: Promise<{
+    id: string;
+  }>;
+}
 
-export async function GET(
-  _req: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  console.log("post")
+export async function GET(_req: NextRequest, context: Params) {
   const post = await db.post.findUnique({
-    where: { id: params.id },
+    where: { id: (await context.params).id },
   });
-  console.log("post",post);
+
   if (!post)
-    return NextResponse.json(errorResponseObject('No Article Found', 404));
+    return NextResponse.json(errorResponseObject("No Article Found", 404));
 
   return NextResponse.json({
-    article: { ...post, coverImage: Array.from(post.coverImage) },
+    article: {
+      ...post,
+      tags: JSON.parse(post.tags),
+      coverImage: Array.from(post.coverImage),
+    },
   });
 }

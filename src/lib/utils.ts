@@ -23,17 +23,42 @@ export function timestampToDateTimeString(timestamp: number): string {
   return date.toISOString().replace(/T/, " ").slice(0, -5); // "2022-03-14T16:39:12.000Z" -> "2022-03-14 16:39:12"
 }
 
-export const generateToken = (email: string, name: string) => {
-  const token = jwt.sign({ email, name }, "ai-knowledge-content", {
+export const generateToken = (userId: string, email: string, name: string) => {
+  const token = jwt.sign({ userId, email, name }, "ai-knowledge-content", {
     expiresIn: "1h",
   });
   return token;
 };
-export const decodeToken = (token: string) => {
-  return jwt.verify(token, "ai-knowledge-content");
+// export const fetchTokenfromCookie=(cokkie:string)
+
+interface TokenPayload {
+  email: string;
+  userId: string;
+  name: string;
+}
+
+export const decodedToken = (token: string): TokenPayload | undefined => {
+  try {
+    const decoded = jwt.verify(token, "ai-knowledge-content");
+
+    // Ensure it's an object and matches the expected structure
+    if (
+      typeof decoded === "object" &&
+      "email" in decoded &&
+      "userId" in decoded &&
+      "name" in decoded
+    ) {
+      return decoded as TokenPayload;
+    }
+
+    return undefined;
+  } catch (error) {
+    console.error("Token verification failed:", error);
+    return undefined;
+  }
 };
 export const verifyToken = (token: string) => {
-  const decode = decodeToken(token);
+  const decode = decodedToken(token);
   if (!decode) return false;
   return true;
 };

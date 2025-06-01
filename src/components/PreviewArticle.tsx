@@ -21,8 +21,8 @@ const PreviewArticle = ({
     }, [tags]);
 
     return (
-        <main className="max-w-4xl mx-auto px-6 py-10 bg-white rounded-xl shadow-md border border-violet-100">
-            <h1 className="text-4xl font-bold text-violet-700 mb-4">{title}</h1>
+        <main className="max-w-4xl mx-auto px-6 py-12 bg-gradient-to-b from-violet-50 to-white rounded-lg shadow-lg">
+            <h1 className="text-4xl font-extrabold mb-6 text-violet-700 border-b-4 border-violet-300 pb-3">{title}</h1>
 
             <div className="flex flex-wrap gap-2 mb-6">
                 {previewTags.map((tag) => (
@@ -49,7 +49,7 @@ const PreviewArticle = ({
                 {description}
             </p>}
 
-            <article className="prose prose-lg max-w-none prose-violet mb-8">
+            <article className="prose prose-lg max-w-none text-violet-900">
                 <div dangerouslySetInnerHTML={{ __html: content || '' }} />
             </article>
 

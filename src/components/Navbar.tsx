@@ -3,8 +3,11 @@ import React from 'react';
 import Link from 'next/link';
 import { Button } from './ui/button';
 import Profile from './profile/profile';
-
-export default function Navbar({name}:{name:string}) {
+import SearchBox from './SearchBox';
+//import { useHeadingStore } from '@/hooks/useHeadingStore';
+export default function Navbar({ name, userId }: { name: string, userId: string }) {
+  //const { setHeading } = useHeadingStore()
+  const profilePropsValue = { name, userId }
   return (
     <nav className="w-full flex items-center justify-between px-8 py-5 bg-white shadow-md border-b border-violet-200">
       <Link href={'/'}>
@@ -13,12 +16,8 @@ export default function Navbar({name}:{name:string}) {
         </h1>
       </Link>
       <div className="flex items-center gap-8 text-violet-600 font-medium">
-        <Link
-          href="/search"
-          className="hover:text-violet-800 transition-colors duration-200"
-        >
-          Search
-        </Link>
+        <SearchBox />
+
         <Link
           href="/summarize"
           className="hover:text-violet-800 transition-colors duration-200"
@@ -39,7 +38,7 @@ export default function Navbar({name}:{name:string}) {
             Post Article
           </Button>
         </Link>
-        <Profile name={name}/>
+        <Profile {...profilePropsValue} />
       </div>
     </nav>
   );

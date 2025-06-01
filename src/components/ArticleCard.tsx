@@ -11,7 +11,7 @@ export default function ArticleCard({
   author,
   date,
 }: ArticleCardProps) {
-  const newTags: string[] = tags ? JSON.parse(tags) : [];
+ 
   return (
     <Link href={`/articles/${id}`}>
       <div className="border border-violet-300 rounded-lg p-5 shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer bg-white hover:bg-violet-50">
@@ -24,7 +24,7 @@ export default function ArticleCard({
         </p>
 
         <div className="flex gap-2 flex-wrap mb-4">
-          {newTags.map((tag, index) => (
+          {tags.map((tag, index) => (
             <span
               key={index}
               className="bg-violet-100 text-violet-700 text-xs px-3 py-1 rounded-full font-medium"

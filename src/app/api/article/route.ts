@@ -1,7 +1,7 @@
 import { db } from "@/db";
 import { NextRequest, NextResponse } from "next/server";
 //import { CreateArticleRequest } from '@/app/articles/article-type';
-import { decodeToken, errorResponseObject, readTime } from "@/lib/utils";
+import { decodedToken, errorResponseObject, readTime } from "@/lib/utils";
 import sharp from "sharp";
 
 export const config = {
@@ -9,8 +9,49 @@ export const config = {
     bodyParser: false,
   },
 };
+interface UserArtlcesParams {
+  params: Promise<{
+    userId: string;
+  }>;
+}
 
-export async function GET() {
+export async function GET(req: NextRequest, context: UserArtlcesParams) {
+  const params = await context.params;
+
+  const { searchParams } = new URL(req.url);
+  const search = searchParams.get("search")?.toLocaleLowerCase() || "";
+  if (search) {
+    const searchedArticles = await db.post.findMany({
+      where: {
+        OR: [
+          {
+            title: { contains: search },
+            description: { contains: search },
+            content: { contains: search },
+          },
+        ],
+      },
+    });
+    return NextResponse.json(
+      searchedArticles.map((article) => {
+        return { ...article, tags: JSON.parse(article.tags) };
+      })
+    );
+  }
+  if (params && params.userId) {
+    const userArticles = await db.post.findMany({
+      where: {
+        createdBy: params.userId,
+      },
+    });
+    if (!userArticles.length)
+      return NextResponse.json(errorResponseObject("No Articles found!", 404));
+    return NextResponse.json(
+      userArticles.map((article) => {
+        return { ...article, tags: JSON.parse(article.tags) };
+      })
+    );
+  }
   const posts = await db.post.findMany();
   const sendPosts = posts.map((post) => {
     return { ...post, tags: JSON.parse(post.tags) };
@@ -27,14 +68,16 @@ export async function POST(req: NextRequest) {
   const file = formData.get("file") as File | null;
   const slug = formData.get("slug") as string;
   const token = req.cookies.get("token")?.value as string | undefined;
-  console.log(token);
+
   if (!token) {
     return NextResponse.json({ message: "Unauthorized", status: 401 });
   }
-  const { email } = decodeToken(token) as { email: string; name: string };
+  const tokenPayLoad = decodedToken(token);
+  if (!tokenPayLoad)
+    return NextResponse.json({ message: "Unauthorized", status: 401 });
   const user = await db.user.findUnique({
     where: {
-      email,
+      id: tokenPayLoad.userId,
     },
   });
   if (!user) {

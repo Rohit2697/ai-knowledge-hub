@@ -3,7 +3,7 @@ import { DropdownMenu, DropdownMenuTrigger } from '../ui/dropdown-menu';
 import AvatarIcon from './avatar-icon';
 import ProfileMenu from './profile-menu';
 
-const Profile = ({name}:{name:string}) => {
+const Profile = ({ name }: { name: string, userId: string }) => {
 
 
     return (
@@ -12,7 +12,7 @@ const Profile = ({name}:{name:string}) => {
                 <button className="outline-none focus:ring-2 focus:ring-violet-400 rounded-full transition">
                     <AvatarIcon name={name} />
                 </button>
-            </DropdownMenuTrigger>
+            </DropdownMenuTrigger >
             <ProfileMenu />
         </DropdownMenu>
     );
